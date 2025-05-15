@@ -1,16 +1,24 @@
 // filepath: backend/server.js
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const axios = require("axios");
 const cors = require("cors");
+const { MongoClient } = require("mongodb");
+
 const app = express();
 const port = 3000;
 
-const uri = "mongodb://localhost:27017"; 
-const dbName = "parkingd"; 
-const availableSpaceCollection = "data"; 
-const spotsCollection = "spots"; 
+
+const uri = "mongodb://localhost:27017";
+const dbName = "parkingd";
+const availableSpaceCollection = "data";
+const spotsCollection = "spots";
 
 app.use(cors());
+app.use(express.json()); 
+
+
+const FLASK_URL = "http://localhost:5000";
+
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Parking API! Use /api/parking to get parking data.");
@@ -29,7 +37,6 @@ app.get("/api/parking", async (req, res) => {
       .sort({ date: -1 })
       .limit(1)
       .toArray();
-    console.log("Fetched document:", latestDocument); 
 
     if (latestDocument.length > 0) {
       res.json({ availableSpots: latestDocument[0].available_space });
@@ -39,10 +46,11 @@ app.get("/api/parking", async (req, res) => {
 
     await client.close();
   } catch (error) {
-    console.error("Error fetching available spots:", error);
+    console.error("Error fetching parking data:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 app.get("/api/parking/spots", async (req, res) => {
   try {
@@ -52,10 +60,10 @@ app.get("/api/parking/spots", async (req, res) => {
     const collection = db.collection(spotsCollection);
 
     const document = await collection.findOne({});
-    console.log("Fetched document:", document); 
+    console.log("Fetched document:", document);
 
     if (document && document.spots) {
-      res.json({ spots: document.spots }); 
+      res.json({ spots: document.spots });
     } else {
       res.status(404).json({ error: "No spots found" });
     }
@@ -66,6 +74,7 @@ app.get("/api/parking/spots", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 app.post("/api/parking/reserve", async (req, res) => {
   try {
@@ -135,6 +144,22 @@ app.post("/api/parking/free", async (req, res) => {
   } catch (error) {
     console.error("Error freeing parking spot:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
+
+
+app.post("/api/predict", async (req, res) => {
+  try {
+    const requestData = req.body;
+
+    // Send the request to Flask
+    const response = await axios.post(`${FLASK_URL}/predict`, requestData);
+
+    
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error calling Flask /predict:", error.message);
+    res.status(500).json({ error: "Failed to fetch prediction from Flask" });
   }
 });
 

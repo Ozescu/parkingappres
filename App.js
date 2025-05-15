@@ -8,6 +8,7 @@ import SignUpScreen from "./screens/SignUpScreen";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import GetStartedScreen from "./screens/GetStartedScreen";
 import ParkingHeatmap from "./screens/ParkingHeatmap";
+import PredictionChat from "./screens/PredictionChat.js";
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,11 @@ export default function App() {
           name="ParkingHeatmap"
           component={ParkingHeatmap}
           options={{ headerShown: true, title: "Parking Heatmap" }}
+        />
+        <Stack.Screen
+          name="PredictionChat"
+          component={PredictionChat}
+          options={{ headerShown: true, title: "Prediction Chat" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

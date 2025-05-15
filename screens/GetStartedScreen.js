@@ -6,22 +6,23 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-
-export default function GetStartedScreen() {
+import BASE_URL from "../config";
+export default function GetStartedScreen({ navigation }) {
   const [availableSpots, setAvailableSpots] = useState(null);
   const [isReserved, setIsReserved] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchParkingData = async () => {
       try {
-        const response = await fetch(
-          "https://ca1b-196-117-153-56.ngrok-free.app/api/parking"
-        );
+        const response = await fetch(`${BASE_URL}/api/parking`);
+        console.log("Response status:", response.status);
         const data = await response.json();
         console.log("Parking data fetched:", data);
         setAvailableSpots(data.availableSpots);
       } catch (error) {
         console.error("Error fetching parking data:", error);
+        setError("Failed to fetch parking data. Please try again.");
       }
     };
 
@@ -30,15 +31,12 @@ export default function GetStartedScreen() {
 
   const handleReserve = async () => {
     try {
-      const response = await fetch(
-        "https://ca1b-196-117-153-56.ngrok-free.app/api/parking/reserve",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/parking/reserve`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
       if (data.success) {
@@ -55,15 +53,12 @@ export default function GetStartedScreen() {
 
   const handleFreeSpace = async () => {
     try {
-      const response = await fetch(
-        "https://ca1b-196-117-153-56.ngrok-free.app/api/parking/free",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/parking/free`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await response.json();
       if (data.success) {
@@ -90,6 +85,7 @@ export default function GetStartedScreen() {
             ? `There are ${availableSpots} empty places!`
             : "Loading..."}
         </Text>
+        {error && <Text style={styles.error}>{error}</Text>}
         <TouchableOpacity
           style={[
             styles.button,
@@ -112,6 +108,18 @@ export default function GetStartedScreen() {
           onPress={handleFreeSpace}
         >
           <Text style={styles.buttonText}>I Freed My Space</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "orange" }]}
+          onPress={() => navigation.navigate("ParkingHeatmap")}
+        >
+          <Text style={styles.buttonText}>View Heatmap</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "orange" }]}
+          onPress={() => navigation.navigate("PredictionChat")}
+        >
+          <Text style={styles.buttonText}>Go to Prediction</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -141,6 +149,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#ddd",
     marginBottom: 20,
+  },
+  error: {
+    color: "red",
+    marginTop: 10,
+    fontSize: 16,
   },
   button: {
     paddingVertical: 15,
