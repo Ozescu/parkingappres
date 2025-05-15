@@ -1,6 +1,6 @@
-# parkingappres
+# Smart Parking 
 
-**parkingappres** est une application mobile de réservation d’emplacements de parking, développée avec React Native en frontend et utilisant **Express** et **Flask** pour le backend.
+**Smart Parking** est une application mobile de réservation d’emplacements de parking, développée avec React Native en frontend et utilisant **Express** et **Flask** pour le backend.
 
 ## Fonctionnalités
 
@@ -10,7 +10,7 @@
 
 ## Tech Stack
 
-- **Frontend** : React Native (JavaScript) citeturn0search0  
+- **Frontend** : React Native (JavaScript) 
 - **Backend API** :  
   - Express (Node.js) pour les opérations CRUD principales citeturn0search1  
   - Flask (Python) pour les services additionnels (authentification, notifications) citeturn0search2  
@@ -50,19 +50,19 @@ parkingappres/
    ```
 3. **Lancer le frontend**  
    ```bash
-   expo start
+   npx expo start
    ```
 
 4. **Installer le backend Express**  
    ```bash
-   cd backend-express
+   cd backend
    npm install
    npm start
    ```
 
 5. **Installer le backend Flask**  
    ```bash
-   cd ../backend-flask
+   cd ./backend
    python3 -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
@@ -72,13 +72,13 @@ parkingappres/
 ## Utilisation
 
 - **Endpoints Express**  
-  - `GET /api/parks` : lister les parkings  
-  - `POST /api/reservations` : créer une réservation  
-  - `DELETE /api/reservations/:id` : annuler une réservation  
+  - `GET /api/parking/spots` : lister les parkings  
+  - `POST /api/parking/reserve` : créer une réservation  
+  - `DELETE /api/parking/free` : annuler une réservation  
 
 - **Endpoints Flask**  
-  - `POST /auth/login` : authentification utilisateur  
-  - `POST /notifications` : gérer les notifications  
+  - `POST /api/predict` : prediction prochaine occupation
+  
 
 ## Contribution
 
